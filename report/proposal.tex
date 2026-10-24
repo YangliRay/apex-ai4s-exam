@@ -1,0 +1,330 @@
+% 超衍智能 AI4S 笔试：科研长程 Task 设计分析 —— 杨力睿
+% 编译：xelatex proposal.tex（需 ctex 宏包）
+\documentclass[11pt,a4paper,fontset=none]{ctexart}
+
+\setCJKmainfont{Noto Serif CJK SC}[BoldFont=Noto Serif CJK SC Bold,AutoFakeSlant=0.2]
+\setCJKsansfont{Noto Sans CJK SC}[BoldFont=Noto Sans CJK SC Bold]
+\setmainfont{TeX Gyre Termes}
+
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+
+\ctexset{
+  section={format=\large\bfseries,beforeskip=1.4em,afterskip=0.7em},
+  subsection={format=\normalsize\bfseries,beforeskip=1.0em,afterskip=0.5em},
+  section/name={,},section/number={\chinese{section}、},section/aftername={},
+}
+\setlist{itemsep=0.25em,topsep=0.4em}
+\linespread{1.25}
+
+
+\newcommand{\Heis}{\vec\sigma_a\!\cdot\!\vec\sigma_b}
+
+\ctexset{autoindent=0pt}
+\setlength{\parindent}{0pt}
+\pagestyle{plain}
+\begin{document}
+
+\begin{center}
+  {\bfseries\Large 科研长程 Task 设计分析}\\[0.8em]
+  杨力睿（Lirui Yang）\\[0.3em]
+  {\small ly344@cantab.ac.uk}\\[0.2em]
+  {\small 2026 年 10 月}
+\end{center}
+\vspace{0.4em}
+
+% =====================================================================
+\section{提案标题}
+
+\begin{quote}
+{\bfseries 只用 Heisenberg 交换相互作用，能以多低的物理代价证明量子动力学难以经典模拟？}\\[0.3em]
+\textit{Certified Classical Hardness of Heisenberg-Exchange Dynamics at Minimal Physical Cost}
+\end{quote}
+
+\noindent 告诉智能体“Heisenberg 相互作用是通用的”这一已知结论，让它自己选择困难性来源、编码方式和晶格结构，构造一个只含 Heisenberg 耦合、且可证明难以经典模拟的量子动力学，并把所需的耦合强度、比特数和演化时间压到尽可能低。
+
+% =====================================================================
+\section{学科领域}
+
+\begin{center}
+\begin{tabular}{@{}lp{0.58\textwidth}@{}}
+\toprule
+一级学科（Scientific Domain） & 物理学 \\
+研究方向（Field） & 量子信息与量子计算 \\
+具体子领域（Subfield） & 量子系统复杂性与量子优越性：模拟型量子模拟器（analog quantum simulator）动力学的经典模拟困难性 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =====================================================================
+\section{科学问题}
+
+\subsection{核心科学问题}
+
+\noindent Heisenberg 交换相互作用 $\Heis = X_aX_b+Y_aY_b+Z_aZ_b$ 是物理上最“受限”的两体相互作用之一：它只有一个自由参数（耦合强度），并且具有完整的 SU(2) 对称性。但 Cubitt、Montanaro 和 Piddock 证明了，耦合可调的 Heisenberg 模型是一个\textbf{通用哈密顿量}\cite{CMP2018}：借助编码和微扰 gadget，它可以在低能子空间里模拟任何其他局域哈密顿量。\\
+\noindent 这个任务要回答的问题是：
+
+\begin{quote}
+能否只用 Heisenberg 耦合，构造一族物理上自然的量子动力学（制备初态 $\to$ 在固定哈密顿量下演化 $\to$ 在计算基测量），使得经典计算机估计其输出概率是 \#P-hard 的？如果能，所需的\textbf{最大耦合强度、物理比特数和演化时间}随问题规模最低能怎样增长？
+\end{quote}
+
+\noindent 具体地，智能体需要决定：
+\begin{enumerate}[label=(\arabic*)]
+  \item 从哪一个\textbf{已知的困难结果}出发（例如二维 Ising 型动力学\cite{BV2018}、IQP 电路\cite{BMS2016}或其他），作为归约和模拟的源头；
+  \item 用什么\textbf{编码}和\textbf{图结构}把目标嵌入纯 Heisenberg 系统；
+  \item 如何\textbf{控制误差}（微扰展开的高阶项、泄漏出编码子空间的部分），以及误差预算如何决定所需的耦合强度；
+  \item 用什么\textbf{数值证据}支撑那些无法完全解析证明的环节。
+\end{enumerate}
+
+\noindent 最高的目标是一个公认的开放问题：\textbf{是否存在耦合强度为 $O(1)$、演化时间为 $O(1)$ 的 Heisenberg 系统，其输出概率在 $2^{-n}$ 精度下的估计是 \#P-hard 的？}我们不要求智能体解决它，但要求它尽量往上靠，并准确说明自己走到了哪里、卡在哪里。比如可以先在放宽的耦合强度或精度要求下取得部分结果，但需明确说明放宽了什么。
+
+\subsection{为什么重要}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em]
+  \item \textbf{量子优越性的理论基础大多是为“电路”建立的，而不是为“真实的物理相互作用”建立的。}随机线路采样、玻色采样、IQP 的困难性证明都假设可以施加任意门；而当下很多实验平台是模拟型的：一个始终开启、几何局域的哈密顿量直接演化。对一个\textbf{固定的、物理上自然的相互作用类型}证明困难性，文献中仍然很少。Bermejo-Vega 等人对 Ising 型动力学做了这件事\cite{BV2018}，但 Ising 相互作用本身需要专门的工程化。
+
+  \item \textbf{Heisenberg 是实验上最自然的相互作用之一。}半导体自旋量子比特之间的交换作用天然就是 Heisenberg 形式。“只用交换作用做量子计算”（exchange-only）的方案\cite{DiVincenzo2000}已经在硅基器件上实现了编码比特的通用逻辑\cite{Weinstein2023}。如果能证明这类平台在\textbf{不加任何额外控制}的情况下就能产生难以模拟的动力学，这会成为一类新的量子优越性实验方案。
+
+  \item \textbf{“通用”不等于“难以模拟”，二者之间的差距正是科学问题所在。}通用性是关于\textbf{低能空间}的陈述，而困难性需要关于\textbf{动力学}、并且在\textbf{高精度}下的陈述。微扰 gadget 的精度和代价是一对根本矛盾：精度要求越高，所需的耦合强度就越大。这个代价能被压到多低是哈密顿量复杂性里一个值得研究的问题。
+
+  \item \textbf{方法可以迁移。}这条路线中的工具——基于编码的模拟、微扰误差的精细控制、最坏情况到平均情况的归约\cite{Quek2025}、反集中性的数值检验\cite{Hangleiter2018}——适用于通用模型分类中的其他模型（横场 Ising、XY 等），也适用于其他物理平台的量子优越性论证。
+\end{enumerate}
+
+\subsection{这是不是真实运行的工作流程？}
+
+\noindent \textbf{是。}这个工作流程是我本人在延世大学量子信息系做全职研究员期间（2025.9–2026.9，导师 Chae-Yeun Park）完整走过的：从文献中的困难性结果出发，设计 Heisenberg 编码与微扰 gadget，推导和修正 Schrieffer–Wolff 展开，用精确对角化逐项验证，分析误差标度与所需耦合强度，证明若干不可能定理，再用超算集群上的大规模数值（Chebyshev 时间演化、守恒子空间、最多 24 个量子比特、每个尺寸 100 组无序实现）检验反集中性。相关论文正在撰写。\\
+
+\noindent 这条路线中的每一个环节——困难性归约、微扰 gadget、精确对角化与大规模时间演化、反集中性的统计检验——也是量子优越性理论方向研究组普遍采用的标准流程\cite{BV2018,Hangleiter2018,Quek2025}。
+
+\paragraph{AI 在这项研究中的实际角色。}我在研究中本身就频繁使用 AI 工具，但它的角色是辅助，主要负责：执行指定的计算、对已有结论做独立验算、整理排版。\textbf{产生新结论的环节}——选择哪条困难性路线、判断哪一步推导需要修正、决定一个数值结论需要做到什么程度、识别出哪些路线走不通——目前都只能由我完成。我希望交给 AI 智能体做更多的事情：它要测量的不是 AI 能不能“算”，而是 AI 能不能“做研究”。
+
+\paragraph{这个任务比我当时的工作更开放。}我在研究中选定的具体路线（困难性来源、编码方案、耦合模式）可以作为\textbf{专家参考解}，用来校准评分档位，不会出现在给智能体的任务描述里。智能体完全可能找到另一条、甚至更好的路线。
+
+% =====================================================================
+\section{工作流程说明}
+
+\subsection{输入}
+
+\paragraph{提供给智能体的：}
+\begin{enumerate}[label=(\arabic*)]
+  \item \textbf{问题陈述与必要知识包}：Heisenberg 模型的通用性定理\cite{CMP2018}；$(\Delta,\eta,\epsilon)$-模拟的定义及其动力学误差界；输出概率估计困难性的标准框架（\#P、Stockmeyer 近似计数、最坏情况到平均情况的归约）。智能体可以自行检索文献，知识包只保证起点一致。
+  \item \textbf{资源指标的精确定义}：以目标哈密顿量的耦合为 $O(1)$ 作为单位，记录\textbf{最大物理耦合强度} $J_{\max}=\max_{ab}|J_{ab}|$、物理比特数、演化时间，它们都表示为问题规模 $n$ 的函数，并且要在给定的困难性精度（例如加性误差 $c\cdot 2^{-n}$）下成立。
+  \item \textbf{计算环境}：Python 沙箱与常用数值库（包括scipy，numpy，quspin等）；一定额度的 CPU 集群时间（足以对 20--24 个量子比特的守恒子空间做时间演化）。
+  \item \textbf{提交格式}：哈密顿量方案的 JSON 模式（键的列表、每条键的耦合作为 $\Delta$、$n$ 和目标参数的函数）；结论清单的格式（见 4.3）。
+\end{enumerate}
+
+\subsection{关键步骤}
+
+\noindent 整个流程大致分五个阶段。
+
+\begin{enumerate}[label=\textbf{阶段 \arabic*}\quad,leftmargin=0pt,itemindent=*,itemsep=0.6em]
+  \item \textbf{选路线：文献调研与方案选择。}找出可用的困难性源头，判断哪一个与 Heisenberg 相互作用的结构相容。例如，Heisenberg 相互作用守恒总自旋，单靠它无法直接产生计算基上的一般动力学，所以必须引入编码；目标族的困难性是由耦合还是由局域场承载，会直接决定编码后需要多强的耦合。\\
+  \emph{产出：}一份路线备忘录，列出考虑过的候选路线、各自的预期代价，以及放弃其他路线的理由。
+
+  \item \textbf{构造：编码与微扰 gadget。}选择编码子空间（例如某个小块哈密顿量的基态空间），计算物理算符在编码子空间上的逻辑像，用 Schrieffer--Wolff 展开推导一阶、二阶有效哈密顿量，求出能复现目标的物理耦合。\\
+  \emph{自检模拟：}对 1--2 个编码块做精确对角化，用至少两种独立方法（例如直接求预解式、数值块对角化）提取有效哈密顿量，与解析公式逐项比对。
+
+  \item \textbf{误差控制与资源标度。}找出主导误差项（更高阶的微扰项、泄漏出编码子空间的部分、跨相邻边的高阶团簇项），必要时重新设计耦合模式或引入抵消项；推导误差关于 $\Delta$、$n$、$t$ 的界，由此得到在目标精度下所需的最大耦合强度 $J_{\max}(n)$。还应当判断哪些误差可以通过设计消除，哪些是结构性的、不可消除的。误差要在\textbf{逻辑基和物理基}下分别分析：从逻辑基换到物理基时误差会变差多少，取决于编码态与计算基的相对结构，也取决于目标中哪些输出概率是困难的。\\
+  \emph{自检模拟：}在 2--3 个编码块上做精确的时间演化，测量输出概率误差随 $\Delta$ 的变化，在双对数坐标下拟合指数和前置系数，\textbf{与理论预测比较}；若不一致，必须回到阶段 2 或 3 查找原因。
+
+  \item \textbf{数值证明：分布性质与统计检验。}困难性论证往往还需要输出分布的整体性质（例如采样困难性所需的反集中性），这只能在更大的系统上用统计方法检验。需要利用守恒量把问题约化到对称子空间，选择合适的时间演化算法（如 Chebyshev 或 Krylov 方法），对足够多的无序实现取样，用 bootstrap、有限样本零分布等方法给出置信区间，并保证不同规模之间的样本数一致。\\
+  \emph{产出：}数据、图表，以及对“什么已被数值支持、什么还不能下结论”的明确陈述。
+
+  \item \textbf{组装与定性。}把以上结果连成一条完整的论证链（困难性源头 $\to$ 模拟 $\to$ 误差预算 $\to$ 物理可测的量），给\textbf{每一条结论}标注状态：已证明、数值支持、或仍为猜想；指出论证链中最薄弱的一环和剩余的开放问题。
+\end{enumerate}
+
+\subsection{预期输出}
+
+\begin{enumerate}[label=(\arabic*)]
+  \item \textbf{机器可读的哈密顿量方案}：\texttt{hamiltonian.json}，以及一个生成脚本，输入 $n$、目标参数和 $\Delta$，输出完整的物理键列表与耦合；同时给出编码映射（每个逻辑基态对应的物理态），以及目标哈密顿量的显式形式。评测程序会直接读取它们。
+  \item \textbf{推导文档}（LaTeX）：编码、有效哈密顿量、误差界、$J_{\max}(n)$ 的推导。
+  \item \textbf{模拟结果}：至少包括：
+  \begin{itemize}
+    \item 有效哈密顿量的数值验证（与解析结果的逐项比对）；
+    \item 误差随 $\Delta$ 的标度曲线、拟合的指数与前置系数，以及与理论预测的对比；
+    \item 时间演化下模拟系统与目标系统输出概率的直接对比；
+    \item 规模化数值的数据与图表（含置信区间）。
+  \end{itemize}
+  所有模拟都要附原始数据、随机种子和一键复现的脚本。
+  \item \textbf{结论清单}：\texttt{claims.json}，每条结论附状态标签（已证明 / 数值支持 / 猜想）、所依赖的其他结论，以及支撑它的证据文件。
+  \item \textbf{研究报告}：完整的论证、放弃的路线及原因、局限性与开放问题。
+\end{enumerate}
+
+\section{评估方案}
+
+这个任务的答案不唯一：不同的困难性源头、编码和耦合模式都可能是对的，好坏也有高下之分。因此对每一份提交，先用全自动的硬门槛判断它\emph{是否成立}，再用尽量客观的指标衡量它\emph{有多好}，只把真正需要领域判断的部分留给专家。
+
+\subsection{输出正确、表现良好的标准}
+
+\paragraph{固定的困难性标准。}智能体可以自由选择模拟什么目标、走什么路线，但\textbf{不能通过放宽“困难”的定义来降低代价}。默认标准是：
+\begin{quote}
+在标准（BPP）归约下，估计纯 Heisenberg 动力学的某个输出概率到加性误差 $c\cdot 2^{-n}$ 是 \#P-hard 的，其中 $n$ 是困难实例的规模。智能体必须写明输出概率是在哪个基下定义的：\textbf{逻辑基}（编码后的逻辑比特）还是\textbf{物理基}（物理比特的计算基）。两者是不同的分布，彼此不能互相推出；一个结论想升级为\textbf{采样}困难性时，困难的量必须和被检验反集中性的分布定义在同一个基上，而反集中性只能在实验实际测量的物理基上检验。
+\end{quote}
+\noindent 如果智能体采用更弱的、依赖未证明猜想的标准，这是允许的，但必须显式列出所依赖的猜想；这类结果单独标注，不与默认标准下的结果直接比较。
+
+\paragraph{门槛，不满足即判为失败。}
+\begin{enumerate}[label=(\alph*)]
+  \item 方案中的每一项都是 Heisenberg 耦合 $J_{ab}\,\Heis$，没有任何其他类型的项；
+  \item 在小规模实例上，评测程序独立验证了方案所声称的模拟关系（对 gadget 路线，即编码子空间上的有效哈密顿量在声称的误差内等于目标）；
+  \item 困难性源头是文献中已经建立的结果，或者智能体给出了完整的新证明（后者转交专家审核），且归约链条没有断裂；
+  \item 智能体自报的数值与评测程序独立复算的结果一致。
+\end{enumerate}
+
+\paragraph{一个已知的路线障碍。}在给出质量梯子之前，先说明现有路线卡在哪里。对任何二阶微扰 gadget 路线，泄漏出编码子空间的误差满足 $\eta^2\sim K/\Delta$，而要产生非平凡的逻辑动力学需要 $Kt\sim 1$，因此模拟误差 $\delta_{\rm sim}\gtrsim 1/(\Delta t)$。要让它低于目标的困难性阈值 $\delta_{\rm hard}$，就必须
+\[
+  \Delta\cdot t \;\gtrsim\; 1/\delta_{\rm hard}.
+\]
+对于 Ising 型目标，$\delta_{\rm hard}\sim 2^{-n}$，所以耦合强度对困难实例规模必然是指数级的。我在研究中对这一类构造严格排除了几种自然的“逃逸”方式（能量重标度、利用复现时刻、把 gadget 拆分为并联通道），对一般的二阶 gadget 则给出了上述启发式论证。\textbf{这个障碍属于“Ising 目标 + $2^{-n}$ 精度 + 二阶 gadget”这条路线，而不是 Heisenberg 相互作用本身。}要打破它，必须改变其中至少一项：换一个更适合 Heisenberg 编码的困难目标、换一种编码与模拟方式，或者采用非微扰的构造。这正是本任务留给智能体的最大空间。
+
+\paragraph{到达门槛之后。}以下 $J_{\max}$ 一律相对\textbf{困难实例的规模 $n$} 来计（而不是总系统尺寸），以免“把困难核心嵌入大系统”之类的技巧被误判为标度改进。
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{}l Y@{}}
+\toprule
+档位 & 表现 \\
+\midrule
+合格 & 给出一个正确的模拟方案，误差分析自洽，所需耦合强度达到\textbf{所选路线下套用已发表通用框架\cite{CMP2018}得到的基线}。对 Ising 路线，通用误差界 $\Delta\sim\|H\|^{6}/\epsilon^{2}$ 配合 $\epsilon\sim 2^{-n}$，得到 $J_{\max}=\mathrm{poly}(n)\cdot 4^{n}$。 \\
+良好 & 在同一路线内利用构造的具体结构，明显改进标度，并有数值验证；正确区分可消除与不可消除的误差。专家参考解属于这一档的上沿：在 Ising 路线下通过优化耦合模式、引入抵消项、并证明编码基振幅只受 $\eta^2$ 而非 $\eta$ 影响，分别给出两种基下的结果：\textbf{逻辑基}下所需耦合降到 $J_{\max}=\Theta(n\cdot 2^{n})$，即指数减半；\textbf{物理基}下，由于计算基态完全不在编码子空间内，$\eta^2$ 的改进因一个宇称性质失效，同时读出还多出一个 $3^{-n}$ 的选择因子，所需耦合为 $\Theta(n^{3}\cdot 4^{n})$。两个数都用于评分：逻辑基衡量模拟本身的质量，物理基决定能否与反集中性衔接、升级为采样困难性。如何缩小两者之间的差距（它取决于编码、目标和读出三者的结构），是留给智能体的一个开放子问题。 \\
+优秀 & 标度达到或超过参考解，并且给出有实质内容的结构性结论：例如严格证明某条路线的障碍（如上面的 $\Delta t\gtrsim 1/\delta_{\rm hard}$），或把论证推进到平均情况困难性、反集中性等更强的层面。 \\
+突破 & 在固定的困难性标准下，以\textbf{任何路线}（换目标、换编码、非微扰方法）得到 $J_{\max}$ 相对困难实例规模为次指数甚至多项式的纯 Heisenberg 构造；极限情形即 3.1 节的开放问题（$O(1)$ 耦合）。预期极难出现；一旦出现，必须经过专家逐行审核。 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent 在每一档内部，诚实度与研究判断（见 5.2 的 F、G 两项）决定排序：同样的结果，结论标注准确、主动报告不利数据的提交排在前面。参考解的具体数值只供评测方校准使用，不出现在给智能体的任务描述中。
+
+\subsection{如何验证：哪些客观可判定，哪些需要专家}
+
+\begin{center}
+\small\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{}p{2.1cm} Y p{2.1cm}@{}}
+\toprule
+评估维度 & 验证方法 & 判定方式 \\
+\midrule
+A.\ 方案有效性 & 解析 \texttt{hamiltonian.json}：检查只含 Heisenberg 耦合、几何局域性与声明一致；在 2--4 个编码块（$\le 16$ 个量子比特）上做精确对角化，用评测程序自己的代码提取编码子空间上的有效哈密顿量，与目标比较；对评测方随机选定的一组 $\Delta$ 扫描，拟合误差的标度指数，与智能体的理论声明比较。 & 客观、全自动 \\
+B.\ 结果可复现 & 在沙箱中重新运行智能体提交的脚本，比对输出与提交的数据；检查随机种子、样本数是否与报告一致。 & 客观、全自动 \\
+C.\ 困难性源头 & 白名单内的困难族（附标准文献）自动核对目标参数是否落在该族内；白名单外的源头、以及智能体自己给出的新困难性证明，转交专家。 & 大部分自动 \\
+D.\ 资源标度 & 智能体声明的误差界必须在评测方能计算的所有小规模实例上成立（自动）；从小规模推到一般 $n$ 的推导由专家审核，可用参考解辅助。 & 半自动 \\
+E.\ 数值质量 & 自动检查：内部恒等式（例如概率归一、不同代码路径计算同一量的一致性）、不同规模间样本数一致、是否报告置信区间；拟合指数与理论不符而仍声称“一致”时自动标记。 & 大部分自动 \\
+F.\ 诚实度 & 抽查 \texttt{claims.json}：标为“数值支持”的结论必须有对应证据文件；标为“已证明”的结论必须有证明，并由专家或模型辅助核查。\textbf{夸大（把猜想写成定理）的扣分远重于保守。} & 半自动 \\
+G.\ 研究判断 & 按评分表打分：路线选择是否有理由、是否比较过替代方案、是否准确找到瓶颈、不可能性结论是否有实质内容、开放问题是否表述精确。 & 专家主观 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{能否程序化、自动化地评估？}
+
+\noindent \textbf{大部分可以。}按上表，A、B 两项完全自动，C、E 大部分自动，D、F 半自动，只有 G 必须由专家判断。粗略估计，总分中约三分之二可以由程序给出。评测流水线如下：
+
+\begin{enumerate}[label=\textbf{\arabic*.},leftmargin=1.5em]
+  \item \textbf{静态检查}（秒级）：JSON 格式、只含 Heisenberg 耦合、几何结构、文件齐全。
+  \item \textbf{独立数值复算}（分钟级）：对小规模实例做精确对角化和时间演化，提取有效哈密顿量、误差标度和输出概率，与目标比较。这一步只用智能体提交的\emph{方案}，不用它的\emph{数据}。
+  \item \textbf{复现检查}（小时级）：重跑智能体的脚本，核对它提交的数据。
+  \item \textbf{声明审计}：把 \texttt{claims.json} 与第 2、3 步的结果交叉比对，自动标记不一致、夸大或缺少证据的结论。
+  \item \textbf{专家评审}：只针对 C（白名单外）、D（一般 $n$ 的推导）和 G。专家拿到的是前四步的报告，而不是原始提交，这样能把专家时间集中在真正需要判断的地方。
+\end{enumerate}
+
+\paragraph{防止“钻空子”的设计。}
+\begin{itemize}
+  \item \textbf{隐藏实例}：评测时由评测程序随机生成新的目标参数（例如局域场的取值）和 $\Delta$，调用智能体的生成脚本得到对应的哈密顿量。这样，只对少数实例手工调好数字的方案会失败。
+  \item \textbf{复算优先于自报}：所有打分用的数值都来自评测程序自己的计算；智能体自报的数字只用来检查一致性。
+  \item \textbf{困难性不能“自封”，标准不能“自降”}：选择一个容易编码、但其实并不困难的目标族，会在门槛 (c) 被拦下；悄悄放宽精度要求、或者把逻辑基下的困难性与物理基下的反集中性拼接成采样困难性结论的提交，会在声明审计中被标记。
+\end{itemize}
+
+\paragraph{评测程序本身的校准。}在用于评估智能体之前，评测程序先用三类已知答案的方案检验：专家参考解（应判为“优秀”档）、由通用框架得到的基线方案（应判为“合格”档），以及人为植入典型错误的方案，例如二阶有效哈密顿量中某个系数的符号或大小写错（应在门槛 (b) 失败）。最后一类错误并非凭空设想：我在研究中就遇到过一份推导里二阶项系数的符号和大小同时出错的情况，正是靠独立的数值验证发现的。
+
+\section{复杂度分析}
+
+\subsection{对领域专家而言}
+
+\paragraph{概念上的难点。}
+
+\begin{enumerate}[label=\textbf{\arabic*.},leftmargin=1.5em,itemsep=0.5em]
+  \item \textbf{构造成本高，导致路径依赖。}即使有通用性论文中的初步结果，要用代数手段把 Heisenberg 耦合“凑”成一个特定的目标相互作用，仍然非常费时；一旦把块间耦合模式放开为 16 个自由参数，复杂度又上一个台阶。后果是，一个人在有限时间里通常只能深挖\textbf{一条}路线：选定目标之后，就很难再回头系统地比较别的目标是否更合适。整个任务里最关键的决定——模拟哪个目标——往往是在信息最少的时候做出的，随后便被构造成本锁定。
+
+  \item \textbf{通用误差界太松，必须针对具体的量重新推导。}通用模拟框架给出的动力学误差界 $2\epsilon t+4\eta$\cite{CMP2018} 对任意可观测量成立，在迹范数意义下也几乎是紧的；但正因为它通用，直接套用就只能得到 $4^n$ 量级的耦合。改进来自一个针对性的观察：我们真正关心的只是\textbf{编码基态之间的振幅}，而第一阶泄漏项对这个振幅恒为零，所以误差由 $\eta^2$ 而不是 $\eta$ 控制。难点在于意识到标准工具在这里过于保守，并找到应当针对哪一个量重新推导。
+
+  \item \textbf{分辨“优化不够”与“结构上不可能”，并判断何时该停。}有些误差是参数没调好，有些则根本消不掉：例如二阶有效相互作用只能张成 $\{\mathbb 1,X,Z\}^{\otimes 2}$，$Y_LY_{L'}$ 必须通过扩大耦合模式在三阶处理；跨相邻边的四阶残差是一个\textbf{三体}逻辑算符，任何两体 Heisenberg 耦合都够不着，因此优化到某个常数就再也降不下去。同样，几条看起来很自然的“绕过指数代价”的思路（能量重标度、利用复现时刻、把 gadget 拆成并联通道）最终都被证明行不通。做不下去时，是该换一组参数继续试，还是该转而证明这条路走不通？判断错了，要么白白耗费科研时间，要么过早放弃。
+
+  \item \textbf{论证链的每一环必须精确对齐。}这条论证链很长，每一环单独看都不难，难的是\textbf{意识到环与环之间有缝}：困难性若在逻辑基成立，而反集中性在物理基检验，二者拼不成采样困难性；最坏情况定理说的是返回概率 $0^n\!\to\!0^n$，而物理基下的选择器只能选出 $1^n$，必须补上一条场平移引理；加性误差版本的困难性并不是乘性误差版本的直接推论；Heisenberg 系综缺少常用的 hiding 对称性，使概率估计的困难性无法直接升级为完整的采样困难性。这些缝只有在对整条链有全局理解时才看得出来。
+\end{enumerate}
+
+\paragraph{专家从头到尾完成所需的时间。}以我自己的经历为参照：我是第一次做量子计算方向的研究，过程中绕了不少弯路，用了大约一年，而且整条链并未全部完成。下表是对一位\textbf{已有经验的专家专注工作}所需时间的估计：
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{0.9\textwidth}{@{}l Y r@{}}
+\toprule
+阶段 & 内容 & 估计时间 \\
+\midrule
+1--3 & 选路线、构造模拟器、误差控制与标度分析 & 4--6 个月 \\
+4 & 反集中性等规模化数值（代码、验证、集群计算、统计） & 2--3 个月 \\
+5 & 最坏情况到平均情况的归约 & 1--2 个月 \\
+5 & 组装论证链、标注结论状态 & 约 1 个月 \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{核心部分}（阶段 1--3 + 组装；对应评分“合格”至“良好”）} & \textbf{约 5--7 个月} \\
+\multicolumn{2}{@{}l}{\textbf{完整流程}（再加反集中性与平均情况归约；对应“优秀”）} & \textbf{约 8--12 个月} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{对前沿 AI 智能体而言}
+
+\paragraph{预期有多难。}本任务的核心部分相当于专家数个月的工作，按每月约 170 个工作小时计，比这个跨度高出约两个数量级。因此我分工作量和难度做出不同预期（基于我对现有AI模型的使用经验）：
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{}p{1.2cm} Y p{3.6cm}@{}}
+\toprule
+档位 & 给智能体的信息 & 预期表现 \\
+\midrule
+L0 & 给定目标哈密顿量和编码，只求耦合系数 & 借助工具大概率能完成 \\
+L1 & 给定目标，自己设计编码、耦合并做误差分析 & 能给出正确方案，多停留在“合格”档 \\
+L2 & \textbf{主任务}：只给定 Heisenberg 的通用性和资源指标，自己选目标、编码、读出并完成论证 & 少数能到“合格” \\
+L3 & 只给科学目标，不给“用 Heisenberg 编码”这条路线 & 超出当前能力 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{难点主要体现在哪里，为什么。}上面列出的专家难点，对 AI 来说分布几乎是\textbf{反过来}的：
+
+\begin{itemize}[itemsep=0.4em]
+  \item \textbf{构造（难点 1）：AI 可能有巨大优势。}计算逻辑像、求解约束、做小规模精确对角化，都可以写成自动化流程。AI 能对大量候选目标快速“构造 $\to$ 验证 $\to$ 估算代价”，完成人做不起的横向比较。但这一优势要兑现，有两个前提：\textbf{筛选标准要设对}——“最合适的目标”不只看构造是否方便，还要看困难性精度、物理基下的损失、能否衔接反集中性；以及\textbf{每个构造都要独立验证}——批量构造时，一个系数错误也会被批量复制。
+  \item \textbf{针对性推导（难点 2）：很可能停在基线。}智能体倾向于原样套用文献中的标准误差界，这样得到的方案是正确的，但只能达到“合格”档。意识到“这个界对我们要算的量太松”，需要对编码子空间结构的具体理解，而不是检索能力。
+  \item \textbf{判断何时该停（难点 3）。}可以预见两种失败模式：一种是在局部反复调参，误差降不下去也不改变思路；另一种是过早宣布成功。把“降不下去”转化为一个可以证明的不可能性结论，需要重新表述问题，这是当前智能体最欠缺的能力。
+  \item \textbf{全局对齐（难点 4）：每一步都对，拼起来却是错的。}智能体擅长写出局部合理的步骤，但在几十步、跨越推导与数值的长链条上，最容易在“缝”处出错：基不一致、选出的概率与证明困难的概率不是同一个、精度标准悄悄改变或者混淆不同东西。这类错误在现在智能体上非常常见。
+  \item \textbf{结论夸大。}把“给出论证”写成“已经证明”，把educated guess当成真理。在困难性这类结论上，这样的夸大很难被非专家察觉。第 5 节中“诚实度”一项的扣分规则，以及“复算优先于自报”的设计，主要就是针对这一点。
+\end{itemize}
+
+\paragraph{小结。}对人来说最费时的是构造，最需要洞察的是判断；对 AI 来说，构造可能是长处，判断是短板。最理想分工是 AI 负责大范围地构造、筛选和验证，人（或未来足够强的 AI）负责设定标准、识别缝隙、决定方向。
+
+% =====================================================================
+\section*{附：关于方向选择的说明}
+
+“提交建议”中提到，如果认为某个方向不适合做成长程任务，也欢迎说明。我在选题时考虑过以下两个方向：
+
+\begin{itemize}[itemsep=0.4em]
+  \item \textbf{单独以“平均情况困难性的证明”为任务：不适合。}这一步是本研究中最深的部分，但它的产出几乎完全是证明。物理与复杂性交叉的长证明目前无法形式化验证，只能由专家逐行审核，评估成本极高，也无法自动化；而且证明“看起来对”和“真的对”之间的差距，恰恰是 AI 最容易蒙混过关的地方。所以在本提案中，它只作为“优秀”档的加分项出现，并要求如实标注状态，而不作为任务主体。
+  \item \textbf{修正引力下的致密星结构：适合，但没有选。}这是我本科与硕士阶段更熟悉的领域（场方程推导 $\to$ 修正的 TOV 方程 $\to$ 数值积分 $\to$ 用引力波观测约束参数）。它很适合做成长程任务：广义相对论极限可以自动检验，换一个文献中没有的耦合项就能生成新的、不会被检索到答案的实例。没有选它，是因为量子计算与贵司关注的前沿方向更直接相关。
+\end{itemize}
+
+% =====================================================================
+\begin{thebibliography}{99}\small
+\bibitem{CMP2018} T.~S. Cubitt, A.~Montanaro, S.~Piddock, \emph{Universal quantum Hamiltonians}, PNAS \textbf{115}, 9497 (2018).
+\bibitem{DiVincenzo2000} D.~P. DiVincenzo, D.~Bacon, J.~Kempe, G.~Burkard, K.~B. Whaley, \emph{Universal quantum computation with the exchange interaction}, Nature \textbf{408}, 339 (2000).
+\bibitem{BV2018} J.~Bermejo-Vega, D.~Hangleiter, M.~Schwarz, R.~Raussendorf, J.~Eisert, \emph{Architectures for quantum simulation showing a quantum speedup}, Phys.\ Rev.\ X \textbf{8}, 021010 (2018).
+\bibitem{Hangleiter2018} D.~Hangleiter, J.~Bermejo-Vega, M.~Schwarz, J.~Eisert, \emph{Anticoncentration theorems for schemes showing a quantum speedup}, Quantum \textbf{2}, 65 (2018).
+\bibitem{BMS2016} M.~J. Bremner, A.~Montanaro, D.~J. Shepherd, \emph{Average-case complexity versus approximate simulation of commuting quantum computations}, Phys.\ Rev.\ Lett.\ \textbf{117}, 080501 (2016).
+\bibitem{Weinstein2023} A.~J. Weinstein \emph{et al.}, \emph{Universal logic with encoded spin qubits in silicon}, Nature \textbf{615}, 817 (2023).
+\bibitem{Quek2025} Y.~Quek, arXiv:2510.06321 (2025).
+\bibitem{METR} METR, \emph{Measuring AI ability to complete long tasks}, arXiv:2503.14499 (2025); Time Horizon 1.1 更新（2026）。
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,7 @@
+{
+  "description": "非法方案：在正确方案上额外加了一个 Z⊗Z 项来抵消三阶误差。它不是 Heisenberg 相互作用，违反任务约束。",
+  "target_family": "二维 Ising 型（Bermejo-Vega et al., PRX 8, 021010），K = π/4",
+  "basis": "logical",
+  "error_exponent": -1.0,
+  "claims": []
+}

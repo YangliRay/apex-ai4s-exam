@@ -1,0 +1,22 @@
+{
+  "description": "4 自旋单态码（每块总自旋 0 子空间，m=4）+ 块间 (σ0−σ1)·(σ0−σ1) 型 Heisenberg 键的二阶 gadget：在二部图上精确得到对角（IQP 型）Z_4 相位 Ising 动力学 exp(−iπH_target)；由于每块 pair(2,3) 的总自旋守恒，H_eff 严格对角，奇数阶在二部图上严格消失，ε ∝ Δ^−1；用单子句两辅助比特的精确 Z_4 gadget 把 #Monotone-2SAT 编码进逻辑 |+⟩^n→|+⟩^n 的输出概率。",
+  "hardness_source": "L. G. Valiant, 'The complexity of enumeration and reliability problems', SIAM J. Comput. 8(3):410–421 (1979)：#MONOTONE-2SAT 是 #P-complete。困难族：对单调 2-CNF φ（v 个变量、m 个子句，重复子句使 m ≥ v+max(0,⌈log2 c⌉+6)），逻辑比特 n=v+2m，目标 H_target=Σ J_ij Z_iZ_j+Σ h_i Z_i（J_ij∈{−1/8,−3/8}，二部图），t=π，|⟨+^n|e^{−iπH_target}|+^n⟩| = #φ·2^{−v−m/2}（精确恒等式）。与 IQP 文献（Bremner–Jozsa–Shepherd, Proc. R. Soc. A 467, 459 (2011)；Bremner–Montanaro–Shepherd, PRL 117, 080501 (2016)；Fujii–Morimae, NJP 19, 033003 (2017)）同属‘复温度 Ising 配分函数 = IQP 振幅’框架，但本方案的归约只依赖 Valiant 1979，是最坏情形、无猜想的。",
+  "basis": "logical",
+  "J_max_scaling": "O(n^4 * 2^(n/2))（已证明的上界，J_max = Δ ≤ 9.6e4·n^4·2^(n/2) 足够）；数值与 linked-cluster 论证支持 Θ(n * 2^(n/2))（猜想）。块间耦合仅 Θ(√Δ)，最大耦合是块内 Δ。物理比特 4n，演化时间 t = π（O(1)）。",
+  "error_exponent": "-1",
+  "claims": [
+    {"id": "C1", "statement": "每个块的 pair(2,3) 的总自旋 S_23^2 与 H_sim 对易；因此精确直接旋转（Schrieffer–Wolff）得到的 H_eff 在逻辑 Z 基下严格对角（所有阶、所有 Δ 只要最低 2^n 个态与其余态分离）。", "status": "proved"},
+    {"id": "C2", "statement": "块内项 γ_i H_23 在码空间上精确贡献 −γ_i − 2γ_i Z_i，无任何高阶修正；块间键 λ(σ_{i0}−σ_{i1})·(σ_{j0}−σ_{j1}) 的二阶贡献精确为 −(λ²/24Δ)(8+4Z_i)(8+4Z_j)，即 Z_iZ_j 系数 −(2/3)λ²/Δ；取 λ_ij = √(3|J_ij|Δ/2)、γ_i = −h_i/2 − Σ_j|J_ij| 使 H_eff = H_target + const + O(1/Δ)。", "status": "proved"},
+    {"id": "C3", "statement": "若逻辑相互作用图是二部图，则 H_eff 的 Δ 展开中所有奇数阶（在 λ 中）严格为零（块内交换 0↔1 的置换对称性 + C1）。", "status": "proved"},
+    {"id": "C4", "statement": "对二部图、|J_ij| ≤ 3/8、Δ ≥ 13.5|E|²（|E|=逻辑键数）：ε(Δ) = min_c‖H_eff − H_target − c‖ ≤ 228|E|^4/Δ（Kato 解析微扰 + 偶函数 Cauchy 估计）。", "status": "proved"},
+    {"id": "C5", "statement": "n=2：ε(Δ) = (5.29±0.01)·J²/Δ，Δ∈[10²,10⁵] 拟合指数 p = −1.000；n=3 路径图 p = −1.000（含 3 体 ZZZ 的 1/Δ 项，系数 ≈ 0.023/Δ）；非二部的三角形对照组 p = −0.506（三阶不消失）。H_eff 非对角元 ≤ 1e−9（数值噪声）。", "status": "numerical"},
+    {"id": "C6", "statement": "链长 n=2..5 的数值表明 ε·Δ 随键数线性增长（每键约 0.08–0.12，|J|=1/8），符合 linked-cluster 定理给出的 ε = O(|E|/Δ)；由此 J_max(n) = O(n·2^{n/2})。", "status": "conjecture"},
+    {"id": "C7", "statement": "单子句 Z_4 gadget：对 a,b∈{0,1}，Σ_{w1,w2∈{0,1}} i^{w1(2+a+b)+w2(1−a−b)} = 2√2 e^{−iπ/4}·[a∨b]；它只引入 w–a、w–b 两体项，保持二部性。", "status": "proved"},
+    {"id": "C8", "statement": "对上述困难实例，⟨+^n|e^{−iπH_target}|+^n⟩ = e^{iφ0}·#φ·2^{−v−m/2}（精确；300 个随机实例数值核对误差 2e−16）。", "status": "proved"},
+    {"id": "C9", "statement": "困难性定理：固定常数 c>0。取 m ≥ v+max(0,⌈log2 c⌉+6)、Δ ≥ 5952|E|^4·2^{n/2}、t=π、初态为（裸）码态 |+_L⟩^{⊗n}、在逻辑 X 基测量，p = Prob(+…+)。若能以 ≥2/3 概率把 p 估计到加性误差 c·2^{−n}，则可由 #φ = round(√p̃·2^{v+m/2}) 精确计算 #MONOTONE-2SAT，故该估计问题在 BPP（Turing）归约下 #P-hard。", "status": "proved"},
+    {"id": "C10", "statement": "裸码态协议（直接突变接通 H_sim，不做绝热缀饰）的振幅误差 ≤ πε + 2·max_x(1−f_x)，其中 1−f_x ≤ 13.5|E|²/Δ；原因是不同逻辑 Z 串处于不同守恒扇区，缀饰只造成权重损失而无交叉干涉。", "status": "proved"},
+    {"id": "C11", "statement": "物理基不可行性（局部）：4 自旋单态子空间中不存在两个正交态在计算基下支撑不相交，故任何单块的计算基测量都不能确定性读出逻辑比特；本文不声称物理基下的困难性。", "status": "proved"},
+    {"id": "C12", "statement": "对不做 padding 的自然族（困难概率处于 2^{−n} 自然量级，如 m=v+K），本方案的 J_max 不能低于 2^{n/2}/poly(n)：恢复计数需要振幅精度 Q≈2^{−n/2}，而 1/Δ 阶的对角误差一般使振幅移动 Θ(poly(n)/Δ)。更一般地，ε ∝ Δ^{−k} 的微扰 gadget 需要 Δ ≳ 2^{n/(2k)}。", "status": "conjecture"},
+    {"id": "C13", "statement": "（单独列出，不作为主结果）字面判据可被 padding 利用：加入 P 个空闲逻辑比特（或大量重复子句）不改变所需振幅精度 Q=2^{−v−m/2}，但使 n 增大；取 P=poly(v+m) 得 J_max = 2^{O(n^δ)}（任意 δ>0）。这只反映判据随 n 变强，而非物理代价降低。", "status": "proved"}
+  ]
+}

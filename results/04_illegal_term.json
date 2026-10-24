@@ -1,0 +1,29 @@
+{
+  "submission": "04_illegal_term",
+  "description": "非法方案：在正确方案上额外加了一个 Z⊗Z 项来抵消三阶误差。它不是 Heisenberg 相互作用，违反任务约束。",
+  "hidden_instances": [
+    [
+      -0.5538072738227551,
+      0.2896917320981518
+    ],
+    [
+      1.3502850375628528,
+      -0.5508483046524556
+    ],
+    [
+      1.3286635551564174,
+      -0.7144921187109156
+    ]
+  ],
+  "gates": {
+    "a_pure_heisenberg": {
+      "pass": false,
+      "details": [
+        "非 Heisenberg 项: type='ZZ', sites=3,7"
+      ]
+    }
+  },
+  "flags": [],
+  "measurements": [],
+  "verdict": "FAIL（门槛 a：含有非 Heisenberg 项）"
+}

@@ -1,0 +1,8 @@
+{
+  "description": "评测程序自检用的 L2 测试提交：把 01 的稀疏 gadget 逐边铺在 Ising 链上。",
+  "hardness_source": "（测试用，不作困难性声明）",
+  "basis": "logical",
+  "J_max_scaling": "（测试用，不作声明）",
+  "error_exponent": -0.5,
+  "claims": []
+}
